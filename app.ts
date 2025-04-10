@@ -9,6 +9,7 @@ import { uploadToS3v2 } from "./services/s3Service";
 import fileRoutes from "./routes/fileRoutes";
 app.use('/api/files', fileRoutes);
 import { upload } from "./utils/upload";
+import { connection } from "./utils/db"; 
 
 //VERSION 2 - WITH URL IN BODY :)
 app.post("/upload", upload.single("pdf_file"), async (req, res) => {
