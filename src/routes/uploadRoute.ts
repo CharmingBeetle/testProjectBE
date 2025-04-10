@@ -1,39 +1,41 @@
-// /src/routes/uploadRoute.ts
 import express, { Request, Response } from 'express';
-import multer from 'multer'; // Multer for file upload
-import { uploadToS3 } from '../services/s3Service'; // Function to upload to S3
-import { extractTextFromPdf, extractTextWithTextract } from '../services/pdfService'; // Text extraction
-import { insertTextToDb } from '../services/dbService'; // DB insertion
+import multer from 'multer';
+import pdfParse from 'pdf-parse';
+import mysql from 'mysql2/promise';
+import fs from 'fs';
+import path from 'path';
 
 const router = express.Router();
+const upload = multer({ dest: 'uploads/' });
 
-// Set up multer for handling file uploads
-const storage = multer.memoryStorage(); // Files are stored in memory (no disk write)
-const upload = multer({ storage: storage }).single('pdf'); // Expect a file field named 'pdf'
+// DB connection (ideally move to separate file)
+const db = await mysql.createConnection({
+  host: process.env.DB_HOST!,
+  user: process.env.DB_USER!,
+  password: process.env.DB_PASSWORD!,
+  database: process.env.DB_NAME!,
+});
 
-// POST route for uploading PDF
-router.post('/upload', upload, async (req: Request, res: Response) => {
-  if (!req.file) {
-    return res.status(400).send("No file uploaded.");
-  }
-
-  const bucketName = 'pdftexts'; // Your S3 bucket name
-  const fileName = req.file.originalname; // Use the original file name or create a unique name
-  const fileBuffer = req.file.buffer; // Multer stores the file as a buffer in memory
-
+router.post('/upload', upload.single('pdf'), async (req: Request, res: Response) => {
   try {
-    // Step 1: Upload PDF to S3
-    await uploadToS3(fileBuffer, bucketName, fileName);
+    if (!req.file) return res.status(400).send('No file uploaded.');
 
-    // Step 2: Extract text from the PDF (use Textract or local pdf-parse)
-    const text = await extractTextWithTextract(bucketName, fileName);  // Or extractTextFromPdf()
+    const filePath = path.resolve(req.file.path);
+    const fileBuffer = fs.readFileSync(filePath);
 
-    // Step 3: Insert extracted text into the DB
-    await insertTextToDb(fileName, text);
+    const parsed = await pdfParse(fileBuffer);
+    const extractedText = parsed.text;
 
-    res.status(200).send("File uploaded and processed successfully.");
-  } catch (error) {
-    res.status(500).send("Error processing file: " + error.message);
+    await db.execute(
+      'INSERT INTO files (file_name, file_data, text_content) VALUES (?, ?, ?)',
+      [req.file.originalname, fileBuffer, extractedText]
+    );
+
+    fs.unlinkSync(filePath); // Clean up temp file
+    res.status(200).send('PDF uploaded and data saved.');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Something went wrong.');
   }
 });
 

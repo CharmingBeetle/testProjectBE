@@ -1,31 +1,13 @@
 // /src/services/pdfService.ts
-import pdf from 'pdf-parse';
+import pdfParse from 'pdf-parse';
 import AWS from 'aws-sdk';
-const textract = new AWS.Textract();
+import fs from 'fs';
+import { S3 } from 'aws-sdk';
 
-export const extractTextFromPdf = (filePath: string): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const data = fs.readFileSync(filePath);
-    pdf(data)
-      .then(result => resolve(result.text))
-      .catch(err => reject(err));
-  });
-};
 
-export const extractTextWithTextract = (bucketName: string, fileName: string): Promise<string> => {
-  const params: AWS.Textract.AnalyzeDocumentRequest = {
-    Document: {
-      S3Object: {
-        Bucket: bucketName,
-        Name: fileName,
-      },
-    },
-  };
-
-  return textract.analyzeDocument(params).promise()
-    .then(data => data.Blocks.map(block => block.Text).join(' '))
-    .catch(err => {
-      console.error("Textract error:", err);
-      throw new Error("Error extracting text with Textract");
-    });
+// Assuming you have the path to the uploaded file
+const extractTextFromPDF = async (filePath: string): Promise<string> => {
+  const fileBuffer = fs.readFileSync(filePath); // Read the PDF file
+  const data = await pdfParse(fileBuffer);      // Extract text
+  return data.text;                             // Return the extracted text
 };
