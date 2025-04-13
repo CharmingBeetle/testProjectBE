@@ -4,9 +4,9 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node app.ts",
-    "dev": "nodemon app.ts"
+    "build": "tsc",
+    "start": "node dist/app.js",
+    "dev": "nodemon --exec ts-node app.ts"
   },
   "repository": {
     "type": "git",
@@ -22,6 +22,7 @@
   "homepage": "https://github.com/CharmingBeetle/testProjectBE#readme",
   "devDependencies": {
     "@types/aws-sdk": "^0.0.42",
+    "@types/cors": "^2.8.17",
     "@types/dotenv": "^6.1.1",
     "@types/express": "^5.0.1",
     "@types/multer": "^1.4.12",
@@ -32,13 +33,18 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.782.0",
+    "@aws-sdk/client-s3": "^3.787.0",
+    "@aws-sdk/s3-request-presigner": "^3.787.0",
+    "@types/puppeteer": "^5.4.7",
     "aws-sdk": "^2.1692.0",
+    "canvas": "^3.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
+    "jsdom": "^26.0.0",
     "multer": "^1.4.5-lts.2",
     "mysql2": "^3.14.0",
+    "pdf-lib": "^1.17.1",
     "pdf-parse": "^1.1.1",
     "uuid": "^11.1.0"
   }

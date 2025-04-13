@@ -1,3 +1,4 @@
+-- Active: 1744383405300@@127.0.0.1@3306@test_db
 DROP DATABASE IF EXISTS test_db;
 CREATE DATABASE test_db;
 USE test_db;
