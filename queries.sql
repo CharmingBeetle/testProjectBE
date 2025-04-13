@@ -8,8 +8,14 @@ CREATE TABLE pdf_documents (
   file_url VARCHAR(512) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   processed_at TIMESTAMP NULL,
-  is_processed BOOLEAN DEFAULT FALSE
+  is_processed BOOLEAN DEFAULT FALSE,
+  title VARCHAR(255) DEFAULT NULL,
+  author VARCHAR(255) DEFAULT NULL,
+  keywords TEXT DEFAULT NULL,
+  page_count INT DEFAULT 1,
+  creator VARCHAR(255) DEFAULT NULL
 );
+
 INSERT INTO pdf_documents 
 (original_name, 
 file_path, 

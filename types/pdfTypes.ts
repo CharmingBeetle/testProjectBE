@@ -5,6 +5,11 @@ export interface PDFDocument {
     extractedText: string;
     fileUrl: string;
     isProcessed: boolean;
+    title?: string;
+    author?: string;
+    keywords?: string;
+    pageCount?: number;
+    creator?: string;
   }
   
 //  * Represents a PDF document in the system

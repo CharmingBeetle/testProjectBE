@@ -1,7 +1,9 @@
 import multer from 'multer';
 
+//MEMORY STORAGE
+// This storage engine stores the files in memory as Buffer objects
 export const upload = multer({
-  storage: multer.memoryStorage(), // Stores file in memory as Buffer
+  storage: multer.memoryStorage(),
   limits: {
     fileSize: 5 * 1024 * 1024 // 5MB
   },
@@ -12,4 +14,5 @@ export const upload = multer({
       cb(new Error('Only PDF files are allowed'));
     }
   }
+  
 });

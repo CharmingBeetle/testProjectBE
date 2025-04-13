@@ -5,8 +5,6 @@ import cors from "cors";
 import path = require("path");
 import { Request, Response, NextFunction } from "express";
 
-  
-
 
   //MIDDLEWARE
   const app = express();

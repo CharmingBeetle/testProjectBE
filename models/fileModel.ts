@@ -1,7 +1,7 @@
 import { Connection } from 'mysql2/promise';
 import  { getConnection } from '../utils/db';
 import { PDFDocument } from '../types/pdfTypes';
-import mysql from 'mysql2';
+
 
 export const insertFileData = async (
   doc:PDFDocument
@@ -17,14 +17,19 @@ export const insertFileData = async (
 
   const [result] = await dbConnection.execute(
       `INSERT INTO pdf_documents 
-       (original_name, file_path, extracted_text, file_url, is_processed)
-       VALUES (?, ?, ?, ?, ?)`,
+       (original_name, file_path, extracted_text, file_url, is_processed, title, author, keywords, page_count, creator)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         doc.originalName,
         doc.filePath || '[in-memory]', // Handle empty path case
         doc.extractedText,
         doc.fileUrl || '', // Ensure non-null
-        doc.isProcessed ? 1 : 0 // Convert boolean to MySQL tinyint
+        doc.isProcessed ? 1 : 0, // Convert boolean to MySQL tinyint
+        doc.title,
+        doc.author,
+        doc.keywords,
+        doc.pageCount,
+        doc.creator
       ]
     );
     console.log('Insert successful. Rows affected:', 
